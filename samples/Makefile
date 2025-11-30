@@ -1,22 +1,29 @@
+# --- Compiler and Flags ---
 CXX := g++
-CXXFLAGS := -std=c++17 -O3
-HIPFLAGS := $(CXXFLAGS) --offload-arch=gfx908
-TARGET := hw5
-SEQUENTIAL := nbody
+CXXFLAGS := -std=c++17 -O3 -pthread
+HIPFLAGS := $(CXXFLAGS) -ffast-math --offload-arch=gfx908
 
+# --- Target Names ---
+EXECUTABLES := hw5 nbody
 
+# --- Primary Targets ---
 .PHONY: all
-all: $(TARGET)
+all: hw5
 
-.PHONY: hw5
+# --- GPU Targets ---
 hw5: hw5.cpp
 	hipcc $(HIPFLAGS) -o hw5 hw5.cpp
-.PHONY: seq
-seq: nbody.cc
-	$(CXX) $(CXXFLAGS) -o nbody nbody.cc
 
+.PHONY: hw5
+
+# --- Sequential Target ---
+# nbody: nbody.cc
+# 	$(CXX) $(CXXFLAGS) -o nbody nbody.cc
+
+# .PHONY: seq
+# seq: nbody
+
+# --- Cleanup ---
 .PHONY: clean
 clean:
-	rm -f $(TARGET) $(SEQUENTIAL)
-
-
+	rm -f $(EXECUTABLES)
